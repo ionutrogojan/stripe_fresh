@@ -7,6 +7,7 @@ import * as $0 from "./routes/api/stripe_intent.ts";
 import * as $1 from "./routes/index.tsx";
 import * as $2 from "./routes/payment-success.tsx";
 import * as $$0 from "./islands/PayElement.tsx";
+import * as $$1 from "./islands/PayResult.tsx";
 
 const manifest = {
   routes: {
@@ -16,6 +17,7 @@ const manifest = {
   },
   islands: {
     "./islands/PayElement.tsx": $$0,
+    "./islands/PayResult.tsx": $$1,
   },
   baseUrl: import.meta.url,
   config,

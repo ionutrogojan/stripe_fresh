@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "preact/hooks";
+import { useEffect, useState } from "preact/hooks";
 import { useSignal } from "@preact/signals";
 import { IS_BROWSER } from "$fresh/runtime.ts";
 import {  type Stripe, type StripeElements, type loadStripe as LoadStripe } from "@stripe/stripe-js";
@@ -11,18 +11,11 @@ declare global { interface Window { stripeElements: StripeElements, stripe: Stri
 export default ({pubKey}: { pubKey: string }) => {
     const [clientSecret, setClientSecret] = useState('');
     const [intentId, setIntentId] = useState('');
-    const [paymentStatus, setPaymentStatus] = useState('');
-    const payment = {
-        visible: useSignal('hide'),
-        loading: useSignal(false),
-        message: useSignal<null | string>("Please provide all the neccessary details"),
-    }
+    const payment = { visible: useSignal('hide'), loading: useSignal(false), message: useSignal<null | string>("Please provide all the neccessary details") }
     useEffect(() => {
         const stripeIntent = async () => {
             const basketPrice = 9999;
-            await fetch('/api/stripe_intent', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+            await fetch('/api/stripe_intent', { method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     amount: basketPrice,
                     payment_intent_id: intentId
@@ -31,7 +24,6 @@ export default ({pubKey}: { pubKey: string }) => {
             .then((res) => res.json())
             .then((data) => { setClientSecret(data.client_secret), setIntentId(data.id), spawnStripe(data.client_secret) })
         }
-        console.log("page load");
         stripeIntent();
     }, []);
     
@@ -80,22 +72,7 @@ export default ({pubKey}: { pubKey: string }) => {
         }
     }
 
-    const retrieveStripe = async (clientSecret: string) => {
-        if(IS_BROWSER && clientSecret) {
-            const { paymentIntent, error } = await window.stripe.retrievePaymentIntent(clientSecret);
-            setPaymentStatus((paymentIntent?.status) as string);
-        }
-    }
-    useEffect(() => {
-        retrieveStripe(clientSecret);
-    }, [window.stripe]);
-
-    useEffect(() => {
-        console.log(paymentStatus);
-    }, [paymentStatus]);
-
     const handleSubmit = async () => {
-        retrieveStripe(clientSecret);
         payment.loading.value = true;
         const { error } = await window.stripe.confirmPayment({
             elements: window.stripeElements,
