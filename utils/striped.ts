@@ -9,4 +9,4 @@ export const stripePUB = (!IS_PRODUCTION ? config().STRIPE_PUB : (Deno.env.get('
 export const stripe = new Stripe(stripeSEC, {
     httpClient: Stripe.createFetchHttpClient(),
     apiVersion: '2022-08-01'
-})
+}) // create a new stripe connection using the secret and public keys
