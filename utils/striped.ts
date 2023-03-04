@@ -1,4 +1,4 @@
-import { load } from "https://deno.land/std@0.178.0/dotenv/mod.ts";
+import { load } from "dotenv";
 import Stripe from "stripe";
 
 const env = await load();
